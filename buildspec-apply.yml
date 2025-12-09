@@ -16,16 +16,11 @@ phases:
       - pip install --upgrade awscli
   pre_build:
     commands:
-      - echo "Extracting artifact and changing to TF directory..."
-      - mkdir -p artifact && cd artifact || exit 1
-      - # CodePipeline will place the artifact containing tfplan here
-      - ls -la || true
-      - cd ../$TF_DIR
-      - terraform init -input=false -backend-config="bucket=aviz-tf-bucket" || terraform init -input=false
+      - echo "Initializing Terraform"
+      - terraform init -input=false -backend-config="bucket=aviz-tf-bucket"
   build:
     commands:
-      - echo "Applying terraform plan (tfplan) from artifact..."
-      - if [ -f "../artifact/tfplan" ]; then cp ../artifact/tfplan ./tfplan; fi
+      - echo "Applying terraform plan"
       - terraform apply -input=false -auto-approve tfplan
 artifacts:
   files:

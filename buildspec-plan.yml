@@ -16,9 +16,8 @@ phases:
       - pip install --upgrade awscli
   pre_build:
     commands:
-      - echo "Entering TF directory: $TF_DIR"
-      - cd $TF_DIR
-      - terraform init -input=false -backend-config="bucket=aviz-tf-bucket" || terraform init -input=false
+      - echo "Initializing Terraform"
+      - terraform init -input=false -backend-config="bucket=aviz-tf-bucket"
   build:
     commands:
       - echo "Validating..."
@@ -28,6 +27,6 @@ phases:
       - terraform show -no-color tfplan > plan.txt
 artifacts:
   files:
-    - $TF_DIR/plan.txt
-    - $TF_DIR/tfplan
+    - plan.txt
+    - tfplan
   discard-paths: no
