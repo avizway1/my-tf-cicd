@@ -30,13 +30,3 @@ variable "allowed_ssh_cidr" {
   default = "0.0.0.0/0"
 }
 
-variable "github_repo" {
-  type        = string
-  description = "GitHub repository in format: owner/repo-name"
-}
-
-variable "github_branch" {
-  type    = string
-  default = "main"
-}
-
