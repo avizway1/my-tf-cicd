@@ -23,19 +23,8 @@ data "aws_security_group" "existing" {
   }
 }
 
-# Find the latest Amazon Linux 2023 AMI (owner = amazon)
-data "aws_ami" "amazon_linux_2023" {
-  most_recent = true
-  owners      = ["amazon"]
-
-  filter {
-    name   = "name"
-    values = ["amzn2023-ami-*-x86_64*"]
-  }
-}
-
 resource "aws_instance" "demo" {
-  ami                    = data.aws_ami.amazon_linux_2023.id
+  ami                    = "ami-00af95fa354fdb788"  # Amazon Linux 2023
   instance_type          = var.instance_type
   subnet_id              = local.subnet_id
   vpc_security_group_ids = [data.aws_security_group.existing.id]
