@@ -1,0 +1,33 @@
+version: 0.2
+
+env:
+  variables:
+    TF_DIR: "terraform/ec2-demo"      # change if your TF files are at a different path
+    TERRAFORM_VERSION: "1.6.0"
+phases:
+  install:
+    runtime-versions:
+      python: 3.9
+    commands:
+      - echo "Installing Terraform ${TERRAFORM_VERSION}..."
+      - curl -fsSL -o /tmp/terraform.zip https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
+      - unzip -o /tmp/terraform.zip -d /usr/local/bin
+      - terraform version
+      - pip install --upgrade awscli
+  pre_build:
+    commands:
+      - echo "Entering TF directory: $TF_DIR"
+      - cd $TF_DIR
+      - terraform init -input=false -backend-config="bucket=aviz-tf-bucket" || terraform init -input=false
+  build:
+    commands:
+      - echo "Validating..."
+      - terraform validate || true
+      - echo "Planning..."
+      - terraform plan -out=tfplan -input=false
+      - terraform show -no-color tfplan > plan.txt
+artifacts:
+  files:
+    - $TF_DIR/plan.txt
+    - $TF_DIR/tfplan
+  discard-paths: no
