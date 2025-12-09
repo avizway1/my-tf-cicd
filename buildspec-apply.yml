@@ -18,6 +18,9 @@ phases:
     commands:
       - echo "Initializing Terraform"
       - terraform init -input=false -backend-config="bucket=aviz-tf-bucket"
+      - echo "Copying tfplan from secondary artifact"
+      - ls -la $CODEBUILD_SRC_DIR_plan/ || true
+      - cp $CODEBUILD_SRC_DIR_plan/tfplan . || echo "tfplan not found in secondary source"
   build:
     commands:
       - echo "Applying terraform plan"
