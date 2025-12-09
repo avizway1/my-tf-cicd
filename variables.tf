@@ -28,3 +28,15 @@ variable "security_group_name" {
 variable "allowed_ssh_cidr" {
   type    = string
   default = "0.0.0.0/0"
+}
+
+variable "github_repo" {
+  type        = string
+  description = "GitHub repository in format: owner/repo-name"
+}
+
+variable "github_branch" {
+  type    = string
+  default = "main"
+}
+

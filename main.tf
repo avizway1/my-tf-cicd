@@ -4,12 +4,15 @@ data "aws_vpc" "default" {
 }
 
 # Resolve default subnets in the default VPC
-data "aws_subnet_ids" "default_subnets" {
-  vpc_id = data.aws_vpc.default.id
+data "aws_subnets" "default_subnets" {
+  filter {
+    name   = "vpc-id"
+    values = [data.aws_vpc.default.id]
+  }
 }
 
 locals {
-  subnet_id = length(data.aws_subnet_ids.default_subnets.ids) > 0 ? data.aws_subnet_ids.default_subnets.ids[0] : null
+  subnet_id = length(data.aws_subnets.default_subnets.ids) > 0 ? data.aws_subnets.default_subnets.ids[0] : null
 }
 
 # Look up existing security group by name (in the same region/account)

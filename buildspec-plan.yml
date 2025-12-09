@@ -2,7 +2,7 @@ version: 0.2
 
 env:
   variables:
-    TF_DIR: "terraform/ec2-demo"      # change if your TF files are at a different path
+    TF_DIR: "."
     TERRAFORM_VERSION: "1.6.0"
 phases:
   install:
