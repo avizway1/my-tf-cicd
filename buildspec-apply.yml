@@ -1,0 +1,33 @@
+version: 0.2
+
+env:
+  variables:
+    TF_DIR: "terraform/ec2-demo"
+    TERRAFORM_VERSION: "1.6.0"
+phases:
+  install:
+    runtime-versions:
+      python: 3.9
+    commands:
+      - echo "Installing Terraform ${TERRAFORM_VERSION}..."
+      - curl -fsSL -o /tmp/terraform.zip https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
+      - unzip -o /tmp/terraform.zip -d /usr/local/bin
+      - terraform version
+      - pip install --upgrade awscli
+  pre_build:
+    commands:
+      - echo "Extracting artifact and changing to TF directory..."
+      - mkdir -p artifact && cd artifact || exit 1
+      - # CodePipeline will place the artifact containing tfplan here
+      - ls -la || true
+      - cd ../$TF_DIR
+      - terraform init -input=false -backend-config="bucket=aviz-tf-bucket" || terraform init -input=false
+  build:
+    commands:
+      - echo "Applying terraform plan (tfplan) from artifact..."
+      - if [ -f "../artifact/tfplan" ]; then cp ../artifact/tfplan ./tfplan; fi
+      - terraform apply -input=false -auto-approve tfplan
+artifacts:
+  files:
+    - '**/*'
+  discard-paths: yes
